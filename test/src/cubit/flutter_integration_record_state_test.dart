@@ -118,4 +118,35 @@ void main() {
       ),
     );
   });
+
+  test('Copywith time last action', () {
+    expect(
+      FlutterIntegrationRecordState(
+        stringBuffer: stringBuffer,
+        file: file,
+        nomTest: nomTest,
+      ).copywith(timeLastAction: 2),
+      FlutterIntegrationRecordState(
+        stringBuffer: stringBuffer,
+        file: file,
+        nomTest: nomTest,
+        timeLastAction: 2,
+      ),
+    );
+  });
+  test('Copywith first action', () {
+    expect(
+      FlutterIntegrationRecordState(
+        stringBuffer: stringBuffer,
+        file: file,
+        nomTest: nomTest,
+      ).copywith(firstAction: false),
+      FlutterIntegrationRecordState(
+        stringBuffer: stringBuffer,
+        file: file,
+        nomTest: nomTest,
+        firstAction: false,
+      ),
+    );
+  });
 }

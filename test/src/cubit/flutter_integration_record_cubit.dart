@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:clock/clock.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_integration_record/src/cubit/flutter_integration_record_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,16 +12,85 @@ void main() {
   late File file;
 
   setUp(() {
-    flutterIntegrationRecordCubit =
-        FlutterIntegrationRecordCubit(nomTest: 'test');
+    flutterIntegrationRecordCubit = FlutterIntegrationRecordCubit(
+      nomTest: 'test',
+      clock: Clock.fixed(
+        DateTime(2023, 01, 22, 16, 18, 56),
+      ),
+      widgetChild: Container(),
+    );
     file = File('assets/images/test.jpg');
-  });
-  test('Tap on Offset(10,10)', () {
-    flutterIntegrationRecordCubit.onTapDown(
-      details: DragDownDetails(
-        globalPosition: const Offset(10, 10),
+    flutterIntegrationRecordCubit.emit(
+      FlutterIntegrationRecordState(
+        stringBuffer: StringBuffer(
+          'await tester.pumpWidget(const App());\n'
+          'await tester.tapAt(const Offset(10.0, 10.0));\n'
+          'await tester.pumpAndSettle();\n'
+          '});}\n\n',
+        ),
+        nomTest: 'nomTest',
+        timeLastAction: 1674389934,
+        firstAction: false,
       ),
     );
+  });
+
+  test('timelastAction never wait', () {
+    flutterIntegrationRecordCubit = FlutterIntegrationRecordCubit(
+      nomTest: 'test',
+      widgetChild: Container(),
+      clock: Clock.fixed(
+        DateTime(2023, 01, 22, 16, 18, 56),
+      ),
+    )..emit(
+        FlutterIntegrationRecordState(
+          stringBuffer: StringBuffer(),
+          nomTest: 'nomTest',
+          timeLastAction: 1674389935,
+        ),
+      );
+    final duration = flutterIntegrationRecordCubit.timelastAction();
+    expect(
+      duration,
+      '',
+    );
+  });
+  test('timelastAction wait 4 seconds', () {
+    flutterIntegrationRecordCubit = FlutterIntegrationRecordCubit(
+      nomTest: 'test',
+      widgetChild: Container(),
+      clock: Clock.fixed(
+        DateTime(2023, 01, 22, 16, 18, 58),
+      ),
+    )..emit(
+        FlutterIntegrationRecordState(
+          stringBuffer: StringBuffer(),
+          nomTest: 'nomTest',
+          timeLastAction: 1674389934,
+        ),
+      );
+    final duration = flutterIntegrationRecordCubit.timelastAction();
+    expect(
+      duration,
+      'const Duration(seconds: 4)',
+    );
+  });
+
+  test('Tap on Offset(10,10)', () {
+    flutterIntegrationRecordCubit
+      ..emit(
+        FlutterIntegrationRecordState(
+          stringBuffer: StringBuffer(),
+          nomTest: 'nomTest',
+          timeLastAction: 1674389935,
+          firstAction: false,
+        ),
+      )
+      ..onTapDown(
+        details: DragDownDetails(
+          globalPosition: const Offset(10, 10),
+        ),
+      );
     expect(
       flutterIntegrationRecordCubit.state.stringBuffer.toString(),
       'await tester.tapAt(const Offset(10.0, 10.0));\n'
@@ -31,15 +101,7 @@ void main() {
   test('Genere fichier test', () async {
     final directory = await getApplicationDocumentsDirectory();
     final fileTest = File('${directory.path}/test.dart');
-    flutterIntegrationRecordCubit
-      ..emit(
-        FlutterIntegrationRecordState(
-          stringBuffer: StringBuffer('test*'),
-          file: fileTest,
-          nomTest: 'test',
-        ),
-      )
-      ..tapStop = Offset.zero;
+    flutterIntegrationRecordCubit.tapStop = Offset.zero;
     // ignore: avoid_slow_async_io
     if (await fileTest.exists()) fileTest.deleteSync();
     // ignore: avoid_slow_async_io
@@ -55,6 +117,7 @@ void main() {
     tearDown: () async {},
     build: () => FlutterIntegrationRecordCubit(
       nomTest: 'test',
+      widgetChild: Container(),
     )
       ..emit(
         FlutterIntegrationRecordState(
@@ -122,6 +185,7 @@ void main() {
     'Focus change',
     build: () => FlutterIntegrationRecordCubit(
       nomTest: 'test',
+      widgetChild: Container(),
     )..emit(
         FlutterIntegrationRecordState(
           currentWord: 'Alex',
@@ -148,6 +212,7 @@ void main() {
     'write',
     build: () => FlutterIntegrationRecordCubit(
       nomTest: 'test',
+      widgetChild: Container(),
     ),
     act: (bloc) => bloc
       ..write(
@@ -193,6 +258,7 @@ void main() {
     'write supprime last tap',
     build: () => FlutterIntegrationRecordCubit(
       nomTest: 'test',
+      widgetChild: Container(),
     )
       ..emit(
         FlutterIntegrationRecordState(

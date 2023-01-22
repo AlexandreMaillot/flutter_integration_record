@@ -11,13 +11,14 @@ class FlutterIntegrationRecord extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final flutterIntegrationRecordCubit =
-        FlutterIntegrationRecordCubit(nomTest: 'ajoute_3');
-
+        FlutterIntegrationRecordCubit(nomTest: 'ajoute_3', widgetChild: child);
+    var firstFocus = true;
     FocusManager.instance.addListener(() {
-      final focus = FocusManager.instance.primaryFocus?.offset;
-      if (focus != null) {
-        flutterIntegrationRecordCubit.focusChanged(offset: focus);
+      final focus = FocusManager.instance.primaryFocus;
+      if (focus != null && firstFocus != true) {
+        flutterIntegrationRecordCubit.focusChanged(offset: focus.offset);
       }
+      firstFocus = false;
     });
     return Material(
       child: GestureDetector(

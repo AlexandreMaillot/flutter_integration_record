@@ -7,7 +7,9 @@ class FlutterIntegrationRecordState extends Equatable {
     required this.nomTest,
     this.champFocus,
     this.writeStart = false,
+    this.firstAction = true,
     this.currentWord = '',
+    this.timeLastAction,
   });
   final StringBuffer stringBuffer;
   final File? file;
@@ -15,6 +17,8 @@ class FlutterIntegrationRecordState extends Equatable {
   final Offset? champFocus;
   final bool writeStart;
   final String currentWord;
+  final int? timeLastAction;
+  final bool firstAction;
 
   FlutterIntegrationRecordState copywith({
     StringBuffer? stringBuffer,
@@ -23,6 +27,8 @@ class FlutterIntegrationRecordState extends Equatable {
     Offset? champFocus,
     bool? writeStart,
     String? currentWord,
+    int? timeLastAction,
+    bool? firstAction,
   }) {
     return FlutterIntegrationRecordState(
       stringBuffer: stringBuffer ?? this.stringBuffer,
@@ -31,6 +37,8 @@ class FlutterIntegrationRecordState extends Equatable {
       champFocus: champFocus ?? this.champFocus,
       writeStart: writeStart ?? this.writeStart,
       currentWord: currentWord ?? this.currentWord,
+      timeLastAction: timeLastAction ?? this.timeLastAction,
+      firstAction: firstAction ?? this.firstAction,
     );
   }
 
@@ -42,5 +50,7 @@ class FlutterIntegrationRecordState extends Equatable {
         champFocus,
         writeStart,
         currentWord,
+        timeLastAction,
+        firstAction,
       ];
 }
